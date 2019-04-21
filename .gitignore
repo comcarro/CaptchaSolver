@@ -1,0 +1,17 @@
+#Maven
+target/archive-tmp/
+target/classes/
+target/generated-sources/
+target/maven-archiver/
+target/maven-status/
+CaptchaSolver-*.jar
+
+#OS
+.DS_Store
+
+#Intellij IDEA
+.idea/
+CaptchaSolver.iml
+
+
+
