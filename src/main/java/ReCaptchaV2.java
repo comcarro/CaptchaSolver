@@ -24,8 +24,9 @@ public class ReCaptchaV2 extends CaptchaSolver {
      * @param d The Selenium webdriver required from method to work.
      * @throws IOException when driver cant find the required data from the website.
      * @throws InterruptedException when Thread.sleep() fails.
+     * @return the updated WebDriver to the user.
      */
-    public void solve(WebDriver d) throws IOException, InterruptedException {
+    public WebDriver solve(WebDriver d) throws IOException, InterruptedException {
         pageUrl = new URL(d.getCurrentUrl());
 
         try{
@@ -47,6 +48,7 @@ public class ReCaptchaV2 extends CaptchaSolver {
         }catch (Exception e){
             throw new IOException("Captcha Solver: No Submit button found.");
         }
+        return d;
     }
 
     /**
@@ -77,6 +79,7 @@ public class ReCaptchaV2 extends CaptchaSolver {
      */
     public void getFromServer() throws IOException, InterruptedException {
         Map<String, String> parameters = new HashMap<>();
+        boolean longSleep = true;
         parameters.put("key", getApiKey());
         parameters.put("action", "get");
         parameters.put("id", reqId);
@@ -86,7 +89,12 @@ public class ReCaptchaV2 extends CaptchaSolver {
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String s = in.readLine();
             if(s.contains("CAPCHA_NOT_READY")){
-                Thread.sleep(15000);
+                if(longSleep) {
+                    Thread.sleep(15000);
+                    longSleep = false;
+                }else {
+                    Thread.sleep(5000);
+                }
                 System.out.println("Captcha Solver: Not ready yet, sleeping for 15 seconds.");
             }else if(s.contains("OK|")){
                 token = s.substring(3);
